@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-sentinel-configmap
+  labels:
+    app: {{ include "redis-sentinel.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data: 
+  sentinel.conf: |
+    port 26379
+    daemonize yes
+    logfile "/var/log/sentinel.log"
+    pidfile "var/run/sentinel.pid"
+    dir "/var/lib/redis/sentinel"
+    sentinel monitor redis-ha redis-master 6379 2
+    sentinel down-after-milliseconds redis-ha 5000
+    sentinel parallel-syncs redis-ha 1
+    sentinel failover-timeout redis-ha 10000

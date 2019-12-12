@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: controller
+  labels:
+    app: controller
+    role: controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controller
+      role: controller
+  template:
+    metadata:
+      labels:
+        app: controller
+        role: controller
+    spec:
+      serviceAccountName: controller
+      containers:
+        - name: controller
+          image: emirozbir/redis-cont:latest
+          imagePullPolicy: Always
+          command: ["/bin/bash"]
+          args: ["-c", "sleep 10000" ]
+
+          env:
+            - name: REDIS_CLUSTER_NAMESPACE
+              value: "default"
+            - name: MASTER_NAME
+              value: "redis-ha"
+            - name: SENTINEL_SERVICE_HOST
+              value: "sentinel-svc"

@@ -1,0 +1,56 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: {{ include "redis-sentinel.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "redis-sentinel.name" . }}
+    helm.sh/chart: {{ include "redis-sentinel.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "redis-sentinel.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "redis-sentinel.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{.Values.image.repository}}:{{.Values.image.tag}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/bin/sh"]
+          args: ["-c", "cat /opt/sentinel.conf > /etc/redis/sentinel.conf && redis-sentinel /etc/redis/sentinel.conf && tail -f /var/log/sentinel.log" ]
+          volumeMounts:
+          - name: sentinel-vol
+            mountPath: /opt/sentinel.conf
+            subPath: sentinel.conf
+    
+          ports:
+            - port: 26379
+              containerPort: 26379
+              protocol: TCP
+      volumes:
+      - name: sentinel-vol
+        configMap:
+          name: redis-sentinel-configmap
+
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+

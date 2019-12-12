@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel-svc-{{ include "redis-sentinel.fullname" . }}
+  labels:
+    app.kubernetes.io/name: sentinel-{{ include "redis-sentinel.name" . }}
+    helm.sh/chart: {{ include "redis-sentinel.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 26379
+      targetPort: 26379
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "redis-sentinel.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
