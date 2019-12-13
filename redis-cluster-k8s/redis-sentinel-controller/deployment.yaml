@@ -20,10 +20,10 @@ spec:
       serviceAccountName: controller
       containers:
         - name: controller
-          image: emirozbir/redis-cont:latest
+          image: emirozbir/redis-cont:0.0.3
           imagePullPolicy: Always
           command: ["/bin/bash"]
-          args: ["-c", "sleep 10000" ]
+          args: ["-c", "python3 /opt/update_svc.py" ]
 
           env:
             - name: REDIS_CLUSTER_NAMESPACE
@@ -31,4 +31,6 @@ spec:
             - name: MASTER_NAME
               value: "redis-ha"
             - name: SENTINEL_SERVICE_HOST
-              value: "sentinel-svc"
+              value: "sentinel-svc-redis-ha-redis-sentinel"
+            - name: PYTHONUNBUFFERED
+              value: "1"

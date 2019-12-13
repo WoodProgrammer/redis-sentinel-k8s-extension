@@ -41,7 +41,7 @@ if __name__ == "__main__":
 
     while True:
         REDIS_POD_IP=obj.get_master()
-
+        print(REDIS_POD_IP)
         api_response = api_instance.list_namespaced_pod(namespace)
         datas = api_response.items
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
                 if check_label(data.metadata.labels["role"]) == False:
                     status = api_instance.patch_namespaced_pod(pod_name, namespace, {"metadata":{"labels":{"role":"master"}}})
-                    logging.info(status)
+                    print(status)
                 else: 
-                    logging.info("No Update")
+                    print("No Update")
 

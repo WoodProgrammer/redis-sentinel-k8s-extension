@@ -1,4 +1,4 @@
-from redis.sentinel import Sentinel
+import redis
 import os
 
 class Connect(object):
@@ -6,9 +6,9 @@ class Connect(object):
     def __init__(self):
         sentinel_svc = os.environ["SENTINEL_SERVICE_HOST"]
         self.master_name = os.environ["MASTER_NAME"]
-        self.sentinel = Sentinel([(sentinel_svc, 26379)], socket_timeout=0.1)
-
+        self.sentinel = redis.StrictRedis(sentinel_svc, 26379)
+        
     
     def get_master(self):
-        master = self.sentinel.discover_master(self.master_name)
-        return master[0]
+        master = self.sentinel.execute_command("SENTINEL get-master-addr-by-name {}".format(self.master_name))
+        return master[0].decode("utf-8")
