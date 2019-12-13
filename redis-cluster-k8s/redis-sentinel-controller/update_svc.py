@@ -32,6 +32,7 @@ def get_cluster_config():
 
     
 
+
 if __name__ == "__main__":
 
     api_instance = get_cluster_config()
@@ -47,7 +48,7 @@ if __name__ == "__main__":
 
         for data in datas:
             print(REDIS_POD_IP)
-            time.sleep(1)
+            time.sleep(20)
             if data.status.pod_ip == REDIS_POD_IP:
                 print(data.metadata.labels)
                 pod_name = data.metadata.name

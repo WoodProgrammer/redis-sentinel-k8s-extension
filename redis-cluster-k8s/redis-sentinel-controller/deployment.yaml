@@ -20,7 +20,7 @@ spec:
       serviceAccountName: controller
       containers:
         - name: controller
-          image: emirozbir/redis-cont:0.0.3
+          image: emirozbir/redis-cont:0.0.4
           imagePullPolicy: Always
           command: ["/bin/bash"]
           args: ["-c", "python3 /opt/update_svc.py" ]
